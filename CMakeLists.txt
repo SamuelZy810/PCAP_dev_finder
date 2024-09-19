@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.28)
 project(PCAP_dev_finder)
 
 # Setting new module path for cmake files and adding packages
+set(PCAPDIR "${CMAKE_SOURCE_DIR}/dependencies/PCAP")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/modules/)
 find_package(PCAP REQUIRED)
 

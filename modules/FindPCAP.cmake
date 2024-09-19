@@ -47,35 +47,53 @@
 #  PCAP_LIBRARIES   - List of libraries when using pcap.
 #  PCAP_FOUND       - True if pcap found.
 
+MESSAGE(STATUS "PCAPDIR is ${PCAPDIR}")
 
-IF(EXISTS $ENV{PCAPDIR})
+IF(PCAPDIR)
+
   FIND_PATH(PCAP_INCLUDE_DIR
     NAMES
-    pcap/pcap.h
-    pcap.h
+      pcap/pcap.h
+      pcap.h
     PATHS
-      $ENV{PCAPDIR}/include
+      ${PCAPDIR}/include
   )
 
-  FIND_LIBRARY(PCAP_LIBRARY
-    NAMES
-      wpcap
-    PATHS
-      $ENV{PCAPDIR}/lib/x64
-  )
+  IF (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    FIND_LIBRARY(PCAP_LIBRARY
+      NAMES
+        wpcap
+      PATHS
+        ${PCAPDIR}/lib/x64
+    )
+  ELSEIF (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    FIND_LIBRARY(PCAP_LIBRARY
+      NAMES
+        wpcap
+      PATHS
+        ${PCAPDIR}/lib
+    )
+  ELSE ()
+    FIND_LIBRARY(PCAP_LIBRARY
+      NAMES
+        wpcap
+      PATHS
+        ${PCAPDIR}/lib/ARM64
+    )
+  ENDIF ()
 
-ENDIF(EXISTS $ENV{PCAPDIR})
+ENDIF(PCAPDIR)
 
 IF(PCAP_INCLUDE_DIR)
   MESSAGE(STATUS "PCAP_INCLUDE_DIR =  ${PCAP_INCLUDE_DIR}")
 ELSE(PCAP_INCLUDE_DIR)
-  MESSAGE(FATAL " Pcap include dirs cannot be found")
+  MESSAGE(FATAL_ERROR " Pcap include dirs cannot be found")
 ENDIF(PCAP_INCLUDE_DIR)
 
 IF(PCAP_LIBRARY)
   MESSAGE(STATUS "PCAP_LIBRARY =  ${PCAP_LIBRARY}")
 ELSE(PCAP_LIBRARY)
-  MESSAGE(FATAL "Pcap library cannot be found")
+  MESSAGE(FATAL_ERROR "Pcap library cannot be found")
 ENDIF(PCAP_LIBRARY)
 
 INCLUDE(FindPackageHandleStandardArgs)
